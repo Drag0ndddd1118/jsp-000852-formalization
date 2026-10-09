@@ -10,15 +10,24 @@ This repository provides a standalone, reproducible Lean 4 verification package 
 - **Formalization Authors**: OpenAI Codex and GPT-5.6 Sol (upstream formalization in `plby/lean-proofs`).
 - **Packaging & Verification**: Qin Zhao (`Drag0ndddd1118`).
 
-## Main Formalized Theorems
+## Contract and Verification Architecture
 
-In `JSP_000852.lean`:
-```lean
-theorem jsp_000852_solved :
-    (fun n : ℕ ↦ (Erdos1024.guaranteedIndependence n : ℝ)) =Θ[Filter.atTop]
-      Erdos1024.resolutionScale :=
-  Erdos1024.erdos_1024
-```
+- **`Challenge.lean`**: Defines the contract statement:
+  ```lean
+  def jsp000852Statement : Prop :=
+    (fun n : ℕ ↦ (Erdos1024.guaranteedIndependence n : ℝ)) =Θ[atTop]
+      Erdos1024.resolutionScale
+  ```
+- **`Submission.lean`**: Formal resolution bridging to `Erdos1024.erdos_1024`:
+  ```lean
+  theorem jsp_000852_solved : jsp000852Statement :=
+    Erdos1024.erdos_1024
+  ```
+- **`check.py`**: Automated mechanical verification ensuring:
+  1. Complete clean build via `lake build`;
+  2. Zero `sorry`, `admit`, `axiom`, `opaque`, `unsafe`, `partial`, or `native_decide`;
+  3. Exact bridge typecheck: `example : jsp000852Statement := jsp_000852_solved`;
+  4. Standard foundational axioms only: `[propext, Classical.choice, Quot.sound]`.
 
 ## Axiom Verification
 
@@ -31,13 +40,12 @@ Zero `sorry`, zero `admit`, zero custom unproved axioms.
 
 ## Building and Verifying
 
-Requires `elan` and Lean `v4.33.0`:
+Requires `elan` and Lean `v4.34.0`:
 
 ```bash
-lake update
 lake exe cache get
 lake build
-lake env lean JSP_000852.lean
+python3 check.py
 ```
 
 ## License

@@ -654,7 +654,7 @@ lemma sum_exp_selectedWeight_bound {K B S : ℕ} [NeZero K]
     (∏ v : V, (((K - 1 : ℕ) : ℝ) + Real.exp ((w v : ℝ) / B))) ≤
         (∏ v : V, ((K : ℝ) *
           Real.exp (2 * (w v : ℝ) / ((K : ℝ) * B)))) := by
-      exact Finset.prod_le_prod (fun _ _ ↦ by positivity) fun v _ ↦ hfactor v
+      exact Finset.prod_le_prod₀ (fun _ _ ↦ by positivity) fun v _ ↦ hfactor v
     _ = (K : ℝ) ^ Fintype.card V *
         Real.exp (∑ v : V, 2 * (w v : ℝ) / ((K : ℝ) * B)) := by
       rw [Finset.prod_mul_distrib, Finset.prod_const, ← Real.exp_sum]
